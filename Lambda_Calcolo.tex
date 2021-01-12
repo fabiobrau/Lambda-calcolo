@@ -1,0 +1,264 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage[italian]{babel}
+\usepackage{cleveref}
+\newtheorem{thm}{Teorema}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{definition}
+\newtheorem{defn}{Definizione}
+\newtheorem{notazione}{Notazione}
+\newtheorem{esempio}{Esempio}
+\newtheorem{oss}{Osservazione}
+
+\newcommand{\FF}{\mathcal{F}}
+\newcommand{\BB}{\mathcal{B}}
+%%%
+\title{Sommario sul Lambda Calcolo}
+\author{Fabio Brau}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\section{Introduzione}
+\section{Lambda Espressioni}
+Dato un insieme $V$ di \textit{variabili}, 
+$\Lambda$ è l'insieme delle \textit{$\lambda$-espressioni} definito come
+segue.
+\begin{defn}
+  Dato un insieme di variabili $V=\left\{ v_1,v_2,\dots \right\}$, 
+  l'insieme delle lambda espressioni $\Lambda$ è definito ricorsivamente come
+  segue:
+  \begin{itemize}
+    \item $V\subseteq\Lambda$, cioè ogni variabile è una lambda espressione;
+    \item Se $M\in\Lambda$ allora $\lambda x.M\in\Lambda$ per ogni variabile
+      $x$. Questo operatore del meta-linguaggio è chiamato
+      \textit{astrazione};
+    \item Se $M,N\in\Lambda$ allora $(MN)\in\Lambda$. Questo operatore
+      binario del metalinguaggio è anche chiamato \textit{applicazione};
+  \end{itemize}
+
+  Una $\lambda$-espressione della forma $\lambda x.M$ è, abusivamente,
+  chiamata astrazione.
+\end{defn}
+
+Osserviamo che i simboli $M, N,\dots,v_0,v_1,\dots$ sono da considerarsi nomi
+di $\lambda$-espressioni. L'assegnamento di un nome viene rappresentato con il simbolo di
+$=$ ed è sempre da considerarsi nel meta linguaggio. Per esempio nella
+formula $M=\lambda x.x$, il simbolo $M$ è l'etichetta dell'espressione
+$\lambda x.x$. 
+
+È evidente che in una lambda espressione il numero di volte in cui appare un
+simbolo di parentesi o il simbolo $\lambda$ può essere non trascurabile.
+Assumendo che i due operatori del metalinguaggio siano associativi a sinistra
+possiamo introdurre la seguente notazione che fornisce una scrittura più concisa.
+\begin{notazione}
+  \label{not:sinistra}
+  Siano $x,y$ variabili e sia $M$ una $\lambda$-espressione, allora la notazione
+  $\lambda xy.M$ è una scrittura abbreviata per $\lambda x.\lambda y.M$ che
+  per associatività a sinistra rappresenta univocamente $\lambda x.(\lambda y.M)$.
+  Analogamente, siano $X,Y,Z$ lambda espressioni, la notazione $XYZ$
+  rappresenta univocamente (per associatività a sinistra) $((XY)Z)$.
+\end{notazione}
+
+\begin{defn}
+  Diremo che due lambda espressioni $M,N$ sono \textit{sintatticamente
+  equivalenti}, e
+  scriveremo $M\equiv N$, se possono essere mutualmente scritte una
+  nell'altra utilizzando la \Cref{not:sinistra}.
+\end{defn}
+\subsection{Variabili libere e legate}
+Consideriamo la $\lambda$-espressione $M=\lambda x.xy$ e sia $z\ne x$. Non sorprende che $M$
+sia, in un qualche senso da definire, equivalente a $\lambda z.zy$, anche se le due
+$\lambda$-espressioni non sono sintatticamente equivalenti, i.e. $M\not\equiv
+\lambda z.zy$. Questo è dovuto al fatto che, intuitivamente, la variabile $x$
+appare legata a $\lambda$ nella forma $\lambda x$.
+\begin{defn}
+  Data una $\lambda$-espressione $M$, l'insieme delle \textit{variabili
+  libere} $\FF(M)$ è costruito induttivamente come segue:
+  \begin{itemize}
+    \item $\FF(x)=\{x\}$;
+    \item $\FF(\lambda x.P)=\FF(P)\setminus\{x\}$;
+    \item $\FF(PQ)=\FF(P)\cup\FF(Q)$;
+  \end{itemize}
+  dove $x$ è una qualunque variabile e $P,Q$ sono $\lambda$-espressioni.
+  Analogamente, l'insieme delle \textit{variabili legate} $\BB(M)$ è definito
+  ricorsivamente sulla costruzione di $M$ come segue:
+  \begin{itemize}
+    \item $\BB(x)=\emptyset$;
+    \item $\BB(\lambda x.P) = \BB(P)\cup \{x\}$;
+    \item $\BB(PQ)=\BB(P)\cup\BB(Q)$;
+  \end{itemize}
+\end{defn}
+
+Osserviamo che può accadere che per una $\lambda$-espressione $M$ vale
+$\BB(M)\cap\FF(M)\ne\emptyset$. I seguenti esempi possono essere di
+chiarimento.
+
+\begin{esempio}
+  La $\lambda$-espressione $x(\lambda x.xx)$ ha una sola variabile libera
+  ($x$) e solo una variabile legata ($x$).
+\end{esempio}
+
+\begin{defn}
+  Definiamo l'insieme dei \textit{combinatori} $\Lambda^0\subseteq\Lambda$ come 
+  \begin{equation}
+    \Lambda^0 =\left\{ M\in\Lambda\,:\, \FF(M)=\emptyset \right\}.
+  \end{equation}
+\end{defn}
+
+\subsection{Operatore di Sostituzione}
+Consideriamo una $\lambda$-espressione $M$ contente una variabile $x$.
+Vogliamo definire formalmente l'operazione di \textit{sostituzione} e cioè l'operazione 
+nel metalinguaggio che consiste nel sostituire alla variabile $x$ 
+una $\lambda$-espressione $N$.
+
+\begin{defn}[Curry]
+  Sia $M,N\in\Lambda$, definiamo l'operatore di \textit{sostituzione} che
+  sostituisce la variabile $x$ nella $\lambda$-espressione $M$ con la
+  $\lambda$-espressione $N$, restituendo una $\lambda$-espressione indicata da
+  $M[x:=N]$, in modo ricorsivo sulla costruzione delle $\lambda$-espressioni:
+  \begin{itemize}
+    \item[{Caso 1}] Se $M$ è una variabile:
+      \begin{itemize}
+        \item Se $M=x$ allora $M[x:=N]\equiv N$;
+        \item Se $M=y\ne x$ allora $M[x:=N]\equiv y$;
+      \end{itemize}
+    \item[Caso 2] Se $M=M_1M_2$ è una applicazione:
+      \begin{itemize}
+        \item $M[x:=N]\equiv (M_1[x:=N])(M_2[x:=N])$; 
+      \end{itemize}
+    \item[Caso 3] Se $M$ è una astrazione:
+      \begin{itemize}
+        \item Se $M=\lambda x.M_1$ allora $M[x:=N] \equiv M$;
+        \item Se $M =\lambda y.M_1$, con $x\ne y$, allora 
+          \[
+            M[x:=N] \equiv\lambda z.M_1[y:=z][x:=N]
+          \]
+          dove: $z=y$ se $x\not\in\FF(M_1)$ o
+          $y\not\in \FF(N)$, $z$ non compare né in $M$ né in $N$ altrimenti;
+      \end{itemize}
+  \end{itemize}
+\end{defn}
+I primi due casi sono intuitivi, mentre il terzo è più delicato. Consideriamo
+$M=\lambda xy.yx$ e $N=y$. Nella sostituzione $M[x:=N]$, la variabile libera 
+$y$ presente in $N$ verrebbe catturata, in quanto è presente in $M$ come variabile legata, 
+diventando anch'essa legata: Questo fenomeno si chiama \textit{cattura} e si rende quindi 
+necessario introdurre la nuova variabile $z$.
+
+\section{$\alpha$-equivalenza}
+
+Intuitivamente una $\lambda$-espressione è ottenuta tramite astrazione e/o
+applicazione di $\lambda$-espressioni. Sarà utile nella definizione di
+$\alpha$-equivalenza la seguente definizione
+\begin{defn}
+  Sia $M\in\Lambda$, definiamo ricorsivamente l'insieme $Sub(M)$, dei
+  \textit{sottotermini} o \textit{sottoespressioni} di $M$, come segue:
+  \begin{itemize}
+    \item Se $M=x$ è una variabile, allora $Sub(M)=\{x\}$;
+    \item Se $M=\lambda x.M_1$, allora $Sub(M)=\{M\} \cup Sub(M_1)$;
+    \item Se $M=M_1M_2$, allora $Sub(M)=\{M\}\cup Sub(M_1) \cup Sub(M_2)$.
+  \end{itemize}
+\end{defn}
+
+
+Possiamo ora definire la relazione la $\alpha$-equivalenza come segue
+
+\begin{defn}[$\alpha$-equivalenza]
+  Sia $M\in\Lambda$, un cambio della variabile legata $x$ in $M$ con la
+  variabile $y$, fresca, è definito sostituendo $\lambda x.N$ con $\lambda
+  y.N[x:=y]$ per ogni sottotermine di astrazione di $M$.
+
+  Due termini $M,N$ si dicono $\alpha$-equivalenti se esiste una catena
+  finita di cambiamenti di variabili legate che scrivono un termine
+  nell'altro. 
+\end{defn}
+
+\begin{lemma}
+  La sostituzione è invariante per $\alpha$-equivalenza. Formalmente, se
+  $M\equiv_\alpha M'$ e se $N\equiv_\alpha N'$ allora
+  \[
+    M[x:= N] \equiv_\alpha M'[x:=N']
+  \]
+\end{lemma}
+
+\section{Equivalenza Semantica}
+Possiamo ora definire una prima versione della equivalenza semantica come segue
+\begin{defn}
+  La relazione di equivalenza semantica $\dot =$ è definita ricorsivamente
+  come segue
+  \begin{itemize}
+    \item[($\beta$)] $(\lambda x.M)N \dot = M[x:=N]$;
+    \item[$(\xi)$] $M\dot = N \Rightarrow \lambda x.M \dot = \lambda x.N$;
+    \item[$(I)$] $\dot = \subseteq \Lambda\times\Lambda$ è di equivalenza;
+    \item[$(II)$] $M\dot = N \Rightarrow \quad ZM\dot =ZN \wedge\, MZ\dot
+      =NZ$;
+  \end{itemize}
+\end{defn}
+
+\begin{defn}[teoria-$\lambda$]
+  Indichiamo con $\lambda$ la teoria del primo ordine avente linguaggio
+  $\Lambda$, senza costanti, senza simboli di funzione e con un unico simbolo
+  di relazione $\dot =$, costituita dalle formule $\beta,\xi,I,II$.
+\end{defn}
+
+Ricordando che una teoria del primo ordine è \textit{inconsistente} se
+dimostra contemporaneamente una formula e la sua negazione, o equivalente, se
+dimostra ogni formula chiusa, vale il seguente teorema.
+\end{document}
+\begin{defn}[$\alpha$-conversione]
+  Data una variabile $y$, l'operatore di $\alpha$-conversione con parametro
+  $y$, associa ad una astrazione $M=\lambda x.M_1$, tale che $y\not\in\FF(M_1)$, la 
+  $\lambda$-espressione $\lambda y.M_1[x:=y]$. 
+
+  Due astrazioni $M,N$ sono $\alpha$-congruenti, e scriveremo
+  $M\leftrightarrow_\alpha N$, se possono 
+  essere mutualmente scritte una nell'altra tramite una $\alpha$-conversione.
+\end{defn}
+
+
+\begin{defn}[$\alpha$-equivalenza]
+  Siano $M,N\in\Lambda$, diremo che $M$ e $N$ sono $\alpha$-equivalenti,
+  e scriveremo $M\equiv_\alpha N$, se vale una delle seguenti:
+  \begin{itemize}
+    \item $M\equiv N$;
+    \item Esistono $X_1,\dots,X_n$ tali che
+    \[
+      M\leftrightarrow_\alpha X_1\leftrightarrow_\alpha\dots X_n
+      \leftrightarrow_\alpha N.
+    \]    
+  \item Esistono $M_1,M_2$ e $N_1,N_2$ tali che $M=M_1M_2$, $N=N_1N_2$ e
+    inoltre
+    \[
+      \begin{aligned}
+        M_1\equiv_\alpha N_1\\
+        M_2\equiv_\alpha N_2
+      \end{aligned}
+    \]
+  \end{itemize}
+\end{defn}
+
+\begin{oss}
+  La relazione $\equiv_\alpha$ è di equivalenza su $\Lambda$.
+  \begin{proof}
+    Occorre dimostrare singolarmente ognuno dei seguenti punti
+    \begin{enumerate}
+      \item $\forall M\in\Lambda,\, M\equiv_\alpha M$;
+      \item $\forall M,N\in\Lambda,\, M\equiv_\alpha N\Rightarrow
+        N\equiv_\alpha M$;
+      \item $\forall X,Y,Z\in\Lambda,\, X\equiv_\alpha Y \wedge
+        Y\equiv_\alpha Z\,\Rightarrow X\equiv_\alpha Z$;
+    \end{enumerate}
+    \begin{enumerate}
+      \item La riflessività è banale in quanto ogni $\lambda$-espressione è
+        sintatticamente equivalente a se stessa. 
+      \item La simmetria si deduce dalla simmetria della $\alpha$-congruenza: 
+        se $M\leftrightarrow_\alpha N$ allora $N\leftrightarrow_\alpha M$.
+    \end{enumerate}
+  \end{proof}
+\end{oss}
+
+
+\end{document}
+
+
