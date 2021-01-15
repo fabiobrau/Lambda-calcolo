@@ -114,8 +114,8 @@ nel metalinguaggio che consiste nel sostituire alla variabile $x$
 una $\lambda$-espressione $N$.
 
 \begin{defn}[Curry]
-  Sia $M,N\in\Lambda$, definiamo l'operatore di \textit{sostituzione} che
-  sostituisce la variabile $x$ nella $\lambda$-espressione $M$ con la
+  Sia $M,N\in\Lambda$, definiamo l'operatore di \textit{sostituzione senza
+  cattura} che sostituisce la variabile $x$ nella $\lambda$-espressione $M$ con la
   $\lambda$-espressione $N$, restituendo una $\lambda$-espressione indicata da
   $M[x:=N]$, in modo ricorsivo sulla costruzione delle $\lambda$-espressioni:
   \begin{itemize}
@@ -136,43 +136,114 @@ una $\lambda$-espressione $N$.
             M[x:=N] \equiv\lambda z.M_1[y:=z][x:=N]
           \]
           dove: $z=y$ se $x\not\in\FF(M_1)$ o
-          $y\not\in \FF(N)$, $z$ non compare né in $M$ né in $N$ altrimenti;
+          $y\not\in \FF(N)$; $z$ scelta tale che non compare né in $M$ né in
+          $N$ altrimenti;
       \end{itemize}
   \end{itemize}
 \end{defn}
 I primi due casi sono intuitivi, mentre il terzo è più delicato. Consideriamo
 $M=\lambda xy.yx$ e $N=y$. Nella sostituzione $M[x:=N]$, la variabile libera 
 $y$ presente in $N$ verrebbe catturata, in quanto è presente in $M$ come variabile legata, 
-diventando anch'essa legata: Questo fenomeno si chiama \textit{cattura} e si rende quindi 
+diventando anch'essa legata: Questo fenomeno si chiama \textit{cattura} e rende
 necessario introdurre la nuova variabile $z$.
 
+\begin{lemma}
+  Valgono le seguenti proposizioni
+  \begin{enumerate}
+    \item Se $x\in\FF(M)$ e $y\not\in\FF(M)$, allora $M\equiv M[x:=y][y:=x]$;
+    \item Se $x\in\FF(M)$ e $y\not\in\FF(M)$, allora $x\not\in\FF(M[x:=y])$ e
+      $y\in\FF(M[x:=y])$;
+  \end{enumerate}
+  \label{lem:sost}
+\end{lemma}
+
 \section{$\alpha$-equivalenza}
-
 Intuitivamente una $\lambda$-espressione è ottenuta tramite astrazione e/o
-applicazione di $\lambda$-espressioni. Sarà utile nella definizione di
-$\alpha$-equivalenza la seguente definizione
-\begin{defn}
-  Sia $M\in\Lambda$, definiamo ricorsivamente l'insieme $Sub(M)$, dei
-  \textit{sottotermini} o \textit{sottoespressioni} di $M$, come segue:
-  \begin{itemize}
-    \item Se $M=x$ è una variabile, allora $Sub(M)=\{x\}$;
-    \item Se $M=\lambda x.M_1$, allora $Sub(M)=\{M\} \cup Sub(M_1)$;
-    \item Se $M=M_1M_2$, allora $Sub(M)=\{M\}\cup Sub(M_1) \cup Sub(M_2)$.
-  \end{itemize}
-\end{defn}
+applicazione di $\lambda$-espressioni. Due $\lambda$-espressioni si dicono
+$\alpha$ equivalenti se possono essere riscritte una nell'altra a meno di
+sostituzione di variabili legate. Questa conversione , per quanto sia
+facilmente comprensibile a livello intuitivo, nasconde una serie di
+complicazioni. La seguente definizione è una riformulazione della definizione formale
+fornita da [Curry et al.].
 
 
-Possiamo ora definire la relazione la $\alpha$-equivalenza come segue
+%Sarà utile nella definizione di
+%$\alpha$-equivalenza la seguente definizione
+%\begin{defn}
+%  Sia $M\in\Lambda$, definiamo ricorsivamente l'insieme $Sub(M)$, dei
+%  \textit{sottotermini} o \textit{sottoespressioni} di $M$, come segue:
+%  \begin{itemize}
+%    \item Se $M=x$ è una variabile, allora $Sub(M)=\{x\}$;
+%    \item Se $M=\lambda x.M_1$, allora $Sub(M)=\{M\} \cup Sub(M_1)$;
+%    \item Se $M=M_1M_2$, allora $Sub(M)=\{M\}\cup Sub(M_1) \cup Sub(M_2)$.
+%  \end{itemize}
+%\end{defn}
+
+
+%\begin{defn}[$\alpha$-equivalenza]
+%  Sia $M\in\Lambda$. Consideriamo l'insieme di $\lambda$ espressioni 
+%  che si ottengono sostituendo a $M$ la variabile legata $x$. La definizione
+%  è costruita per casi come segue
+%  \begin{itemize}
+%    \item Se $M=x$, allora $R_M=\{x\}$;
+%    \item Se $M=\lambda x.M_1$, allora $R_M=\left\{ \lambda
+%      y.M_1[x:=y]\,:\,y\not\in\FF(M) \right\}$;
+%    \item Se $M=M_1M_2$, allora $R_M=\left\{
+%      N_1N_2\,:\,N_1\in R_{M_1},\,N_2\in R_{M_2} \right\}$.
+%  \end{itemize}
+%  Osserviamo che $R_M$ forniscono un ricoprimento di $\lambda$, precisamente
+%  \[
+%    \bigcup_{M\in\Lambda} R_M = \Lambda.
+%  \]
+%
+%\end{defn}
 
 \begin{defn}[$\alpha$-equivalenza]
-  Sia $M\in\Lambda$, un cambio della variabile legata $x$ in $M$ con la
-  variabile $y$, fresca, è definito sostituendo $\lambda x.N$ con $\lambda
-  y.N[x:=y]$ per ogni sottotermine di astrazione di $M$.
-
-  Due termini $M,N$ si dicono $\alpha$-equivalenti se esiste una catena
-  finita di cambiamenti di variabili legate che scrivono un termine
-  nell'altro. 
+  Definiamo la relazione $\equiv_\alpha$ induttivamente simultanemente alla costruzione
+  della lambda espressioni.
+  Preso $\Lambda_0$ come l'insieme delle $\lambda$-espressioni di rango $0$
+  (costituite da una sola variabile, senza astrazioni o applicazioni), definiamo
+  \[
+    \forall x,y \in \Lambda_0,\quad x\equiv_\alpha y\iff x=y.
+  \]
+  Osserviamo che $\equiv_\alpha$ è di equivalenza su $\Lambda_0$.
+  Consideriamo ora l'insieme delle $\lambda$-espressioni di rango $k>0$
+  definito ricorsivamente come $\Lambda_k=\hat \Lambda_k\cup \bar \Lambda_k$,
+  dove
+  \[
+    \begin{aligned}
+      \hat \Lambda_k &=\left\{ \lambda
+      x.M\,:M\in\Lambda_{k-1}\right\}\\
+      \bar \Lambda_k&=\left\{ (MN), (NM)\,:\, M\in\Lambda_{k-1},\,N\in\Lambda_i,\,i<k \right\}
+    \end{aligned}
+  \]
+  Su questo insieme definiamo la relazione $\equiv_\alpha$ come
+  \begin{itemize}
+    \item Se $M,N\in\hat\Lambda_{k}$, con $M=\lambda x.M_1$ e $N=\lambda y.N_1$
+      allora
+      \begin{itemize}
+        \item Se $x=y$, allora
+          \[
+            M\equiv_\alpha N \iff M_1\equiv_\alpha N_1
+          \]
+        \item Se $x\ne y$, allora
+          \[
+            M\equiv_\alpha N \iff N_1\equiv_\alpha M_1[x:=y]\quad\wedge\quad
+            (y\not\in\FF(M_1) \wedge x\not\in\FF(N_1))
+          \]
+      \end{itemize}
+    \item Se $M,N\in\bar\Lambda_k$, con $M=M_1M_2$ e $N=N_1N_2$, allora
+      \[
+        M\equiv_\alpha N \iff M_1\equiv_\alpha N_1\wedge M_2\equiv_\alpha N_2
+      \]
+  \end{itemize}
+  Per induzione forte e \Cref{lem:sost} si dimostra che $\equiv_\alpha$ è di equivalenza
+  su $\Lambda_k$ per ogni $k$. In conclusione, essendo $\Lambda=\cup_k \Lambda_k$, 
+  le relazioni di equivalenza si estendono ad una relazione di equivalenza 
+  sulle lambda espressioni.
 \end{defn}
+
+
 
 \begin{lemma}
   La sostituzione è invariante per $\alpha$-equivalenza. Formalmente, se
