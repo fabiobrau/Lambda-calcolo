@@ -255,10 +255,11 @@ fornita da [Curry et al.].
 
 \section{Equivalenza Semantica}
 Possiamo ora definire una prima versione della equivalenza semantica come segue
-\begin{defn}
-  La relazione di equivalenza semantica $\dot =$ è definita ricorsivamente
-  come segue
+\begin{defn}[Teoria $\lambda$]
+  Teoria del primo ordine sul linguaggio $\Lambda$ con relazione di equivalenza semantica 
+  $\dot =$ per cui valgono i seguenti assiomi
   \begin{itemize}
+    \item[($\alpha$)] $M\equiv_\alpha N \Rightarrow M \dot = N$;
     \item[($\beta$)] $(\lambda x.M)N \dot = M[x:=N]$;
     \item[$(\xi)$] $M\dot = N \Rightarrow \lambda x.M \dot = \lambda x.N$;
     \item[$(I)$] $\dot = \subseteq \Lambda\times\Lambda$ è di equivalenza;
@@ -267,69 +268,4 @@ Possiamo ora definire una prima versione della equivalenza semantica come segue
   \end{itemize}
 \end{defn}
 
-\begin{defn}[teoria-$\lambda$]
-  Indichiamo con $\lambda$ la teoria del primo ordine avente linguaggio
-  $\Lambda$, senza costanti, senza simboli di funzione e con un unico simbolo
-  di relazione $\dot =$, costituita dalle formule $\beta,\xi,I,II$.
-\end{defn}
-
-Ricordando che una teoria del primo ordine è \textit{inconsistente} se
-dimostra contemporaneamente una formula e la sua negazione, o equivalente, se
-dimostra ogni formula chiusa, vale il seguente teorema.
 \end{document}
-\begin{defn}[$\alpha$-conversione]
-  Data una variabile $y$, l'operatore di $\alpha$-conversione con parametro
-  $y$, associa ad una astrazione $M=\lambda x.M_1$, tale che $y\not\in\FF(M_1)$, la 
-  $\lambda$-espressione $\lambda y.M_1[x:=y]$. 
-
-  Due astrazioni $M,N$ sono $\alpha$-congruenti, e scriveremo
-  $M\leftrightarrow_\alpha N$, se possono 
-  essere mutualmente scritte una nell'altra tramite una $\alpha$-conversione.
-\end{defn}
-
-
-\begin{defn}[$\alpha$-equivalenza]
-  Siano $M,N\in\Lambda$, diremo che $M$ e $N$ sono $\alpha$-equivalenti,
-  e scriveremo $M\equiv_\alpha N$, se vale una delle seguenti:
-  \begin{itemize}
-    \item $M\equiv N$;
-    \item Esistono $X_1,\dots,X_n$ tali che
-    \[
-      M\leftrightarrow_\alpha X_1\leftrightarrow_\alpha\dots X_n
-      \leftrightarrow_\alpha N.
-    \]    
-  \item Esistono $M_1,M_2$ e $N_1,N_2$ tali che $M=M_1M_2$, $N=N_1N_2$ e
-    inoltre
-    \[
-      \begin{aligned}
-        M_1\equiv_\alpha N_1\\
-        M_2\equiv_\alpha N_2
-      \end{aligned}
-    \]
-  \end{itemize}
-\end{defn}
-
-\begin{oss}
-  La relazione $\equiv_\alpha$ è di equivalenza su $\Lambda$.
-  \begin{proof}
-    Occorre dimostrare singolarmente ognuno dei seguenti punti
-    \begin{enumerate}
-      \item $\forall M\in\Lambda,\, M\equiv_\alpha M$;
-      \item $\forall M,N\in\Lambda,\, M\equiv_\alpha N\Rightarrow
-        N\equiv_\alpha M$;
-      \item $\forall X,Y,Z\in\Lambda,\, X\equiv_\alpha Y \wedge
-        Y\equiv_\alpha Z\,\Rightarrow X\equiv_\alpha Z$;
-    \end{enumerate}
-    \begin{enumerate}
-      \item La riflessività è banale in quanto ogni $\lambda$-espressione è
-        sintatticamente equivalente a se stessa. 
-      \item La simmetria si deduce dalla simmetria della $\alpha$-congruenza: 
-        se $M\leftrightarrow_\alpha N$ allora $N\leftrightarrow_\alpha M$.
-    \end{enumerate}
-  \end{proof}
-\end{oss}
-
-
-\end{document}
-
-
