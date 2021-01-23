@@ -14,39 +14,57 @@
 \newcommand{\FF}{\mathcal{F}}
 \newcommand{\BB}{\mathcal{B}}
 %%%
-\title{Sommario sul Lambda Calcolo}
+\title{An implementable definition of $\alpha$-equivalence in
+$\lambda$-calculus\\
+{\large Functional Programming Project}}
 \author{Fabio Brau}
 
 \begin{document}
 \maketitle
 \tableofcontents
-\section{Introduzione}
-\section{Lambda Espressioni}
-Dato un insieme $V$ di \textit{variabili}, 
-$\Lambda$ è l'insieme delle \textit{$\lambda$-espressioni} definito come
-segue.
-\begin{defn}
-  Dato un insieme di variabili $V=\left\{ v_1,v_2,\dots \right\}$, 
-  l'insieme delle lambda espressioni $\Lambda$ è definito ricorsivamente come
-  segue:
-  \begin{itemize}
-    \item $V\subseteq\Lambda$, cioè ogni variabile è una lambda espressione;
-    \item Se $M\in\Lambda$ allora $\lambda x.M\in\Lambda$ per ogni variabile
-      $x$. Questo operatore del meta-linguaggio è chiamato
-      \textit{astrazione};
-    \item Se $M,N\in\Lambda$ allora $(MN)\in\Lambda$. Questo operatore
-      binario del metalinguaggio è anche chiamato \textit{applicazione};
-  \end{itemize}
+\section{Introduction}
 
-  Una $\lambda$-espressione della forma $\lambda x.M$ è, abusivamente,
-  chiamata astrazione.
+
+This project's aim is to provide a formal definition of $\alpha$-equivalence
+on the $\lambda$-terms without seeing it as a transitive closure of a
+relation and without assuming conventions on the name of the variables.
+
+
+\section{Lambda Terms}
+From an intuitive points of view, a $\lambda$-term is a representation of
+a mathematical function written as a combination of \textit{variables}. It
+is quite surprising to notice that ``a systematic notation for functions is lacking
+in ordinary mathematics'' [Curry]. In fact, the meaning of $f(x)$, that is the usual
+accepted notation to indicate a function (\textit{Euler Notation}), is not uniquely
+determined and has to be deduced from the context. Sometime we refers to the
+definition of  a function of the variable $x$; sometimes we refers to the
+evaluation of the function in a value (or in a point, a vector, a matrix, a
+set and so on) equal to $x$.
+
+An unambiguous way to indicate that the function $f$ depends on the variable $x$ 
+could be the notation: $x\mapsto f(x)$. And, we can use the notation $f(x)$
+when we intend to evaluate $f$ in the object $x$. The introduction of the
+symbol $\lambda$ could help in a typographic sense by shortening the
+notations $x\mapsto f(x)$ in $\lambda x.f(x)$.
+
+\begin{defn}
+  Let be $V={v_1,v_2,\dots}$ an infinite set of \textit{variables}. The
+  set of the $\lambda$-terms, indicated with $\Lambda$, is recursively
+  defined as follow
+  \begin{itemize}
+    \item $V\subseteq\Lambda$, i.e., each variable is a $\lambda$-term;
+    \item If $M$ is a $\lambda$-term, then $\lambda x.M\in\Lambda$, for any variable
+      $x$, is a $\lambda$-term called \textit{abstraction};
+    \item If $M,N$ are $\lambda$-terms then $(MN)$ is a new $\lambda$-term
+      called \textit{application}.
+  \end{itemize}
 \end{defn}
 
-Osserviamo che i simboli $M, N,\dots,v_0,v_1,\dots$ sono da considerarsi nomi
-di $\lambda$-espressioni. L'assegnamento di un nome viene rappresentato con il simbolo di
-$=$ ed è sempre da considerarsi nel meta linguaggio. Per esempio nella
-formula $M=\lambda x.x$, il simbolo $M$ è l'etichetta dell'espressione
-$\lambda x.x$. 
+It's compulsory to observe that the symbols $M,N,\dots, v_0, v_1,\dots$ have
+to be intended as names of $\lambda$-terms. The \textit{assignment} of a name
+to a $\lambda$-term, indicated with $=$, has to be ever intend in the
+metalanguage. For example, in the formula $M=\lambda x.x$, the symbol $M$ it
+is just the label of the $\lambda$-term $\lambda x.x$.
 
 È evidente che in una lambda espressione il numero di volte in cui appare un
 simbolo di parentesi o il simbolo $\lambda$ può essere non trascurabile.
@@ -142,7 +160,7 @@ una $\lambda$-espressione $N$.
   \end{itemize}
 \end{defn}
 I primi due casi sono intuitivi, mentre il terzo è più delicato. Consideriamo
-$M=\lambda xy.yx$ e $N=y$. Nella sostituzione $M[x:=N]$, la variabile libera 
+$M=\lambda xy.x$ e $N=y$. Nella sostituzione $M[x:=N]$, la variabile libera 
 $y$ presente in $N$ verrebbe catturata, in quanto è presente in $M$ come variabile legata, 
 diventando anch'essa legata: Questo fenomeno si chiama \textit{cattura} e rende
 necessario introdurre la nuova variabile $z$.
