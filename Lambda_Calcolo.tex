@@ -3,13 +3,13 @@
 \usepackage{amsthm}
 \usepackage[italian]{babel}
 \usepackage{cleveref}
-\newtheorem{thm}{Teorema}
+\newtheorem{thm}{Theorem}
 \newtheorem{lemma}{Lemma}
 \theoremstyle{definition}
-\newtheorem{defn}{Definizione}
-\newtheorem{notazione}{Notazione}
-\newtheorem{esempio}{Esempio}
-\newtheorem{oss}{Osservazione}
+\newtheorem{defn}{Definition}
+\newtheorem{notation}{Notation}
+\newtheorem{ese}{Example}
+\newtheorem{oss}{Observation}
 
 \newcommand{\FF}{\mathcal{F}}
 \newcommand{\BB}{\mathcal{B}}
@@ -31,21 +31,21 @@ relation and without assuming conventions on the name of the variables.
 
 
 \section{Lambda Terms}
-From an intuitive points of view, a $\lambda$-term is a representation of
+From an intuitive point of view, a $\lambda$-term is a representation of
 a mathematical function written as a combination of \textit{variables}. It
 is quite surprising to notice that ``a systematic notation for functions is lacking
 in ordinary mathematics'' [Curry]. In fact, the meaning of $f(x)$, that is the usual
 accepted notation to indicate a function (\textit{Euler Notation}), is not uniquely
-determined and has to be deduced from the context. Sometime we refers to the
-definition of  a function of the variable $x$; sometimes we refers to the
+determined and has to be deduced from the context. Sometimes, with this
+notation, we refer to a function depending on the variable $x$; sometimes we refers to the
 evaluation of the function in a value (or in a point, a vector, a matrix, a
 set and so on) equal to $x$.
 
 An unambiguous way to indicate that the function $f$ depends on the variable $x$ 
 could be the notation: $x\mapsto f(x)$. And, we can use the notation $f(x)$
-when we intend to evaluate $f$ in the object $x$. The introduction of the
-symbol $\lambda$ could help, in a typographic sense, by shortening the
-notations $x\mapsto f(x)$ in $\lambda x.f(x)$.
+when we want to evaluate $f$ in the object $x$. The introduction of the
+symbol $\lambda$ could be helpful, in a typographic sense, by shortening the
+notation $x\mapsto f(x)$ in $\lambda x.f(x)$.
 
 \begin{defn}
   Let be $V=\{v_1,v_2,\dots\}$ an infinite set of \textit{variables}. The
@@ -62,117 +62,129 @@ notations $x\mapsto f(x)$ in $\lambda x.f(x)$.
 
 It's compulsory to observe that the symbols $M,N,\dots, v_0, v_1,\dots$ have
 to be intended as names of $\lambda$-terms. The \textit{assignment} of a name
-to a $\lambda$-term, indicated with $=$, has to be ever intend in the
-metalanguage. For example, in the formula $M=\lambda x.x$, the symbol $M$ it
-is just the label of the $\lambda$-term $\lambda x.x$.
+to a $\lambda$-term, indicated with $=$, only holds and has sense in the metalanguage. 
+For example, in the formula $M=\lambda x.x$, the symbol $M$ is just the label 
+of the $\lambda$-term $\lambda x.x$.
 
-È evidente che in una lambda espressione il numero di volte in cui appare un
-simbolo di parentesi o il simbolo $\lambda$ può essere non trascurabile.
-Assumendo che i due operatori del metalinguaggio siano associativi a sinistra
-possiamo introdurre la seguente notazione che fornisce una scrittura più concisa.
-\begin{notazione}
-  \label{not:sinistra}
-  Siano $x,y$ variabili e sia $M$ una $\lambda$-espressione, allora la notazione
-  $\lambda xy.M$ è una scrittura abbreviata per $\lambda x.\lambda y.M$ che
-  per associatività a sinistra rappresenta univocamente $\lambda x.(\lambda y.M)$.
-  Analogamente, siano $X,Y,Z$ lambda espressioni, la notazione $XYZ$
-  rappresenta univocamente (per associatività a sinistra) $((XY)Z)$.
-\end{notazione}
+By assuming that the abstraction and the application are associative on the
+left (as operators of $\lambda$-terms in the metalanguage) we can introduce
+the following notation.
+\begin{notation}
+  \label{not:left}
+  Let $x,y$ be two variables and $M$ a $\lambda$-term, then the formula
+  $\lambda xy.M$ is a shorter notation for $\lambda x.\lambda y. M$ that, by
+  the left associative convention, represents uniquely $\lambda x.(\lambda y.M)$.
+  Similarly, if $X,Y,Z$ are $\lambda$-terms, then the formula $XYZ$ uniquely
+  represents $((XY)Z)$ by the left associative rule.
+\end{notation}
 
 \begin{defn}
-  Diremo che due lambda espressioni $M,N$ sono \textit{sintatticamente
-  equivalenti}, e
-  scriveremo $M\equiv N$, se possono essere mutualmente scritte una
-  nell'altra utilizzando la \Cref{not:sinistra}.
+  We will say that two $\lambda$-terms $M,N$ are \textit{syntactically
+  equivalents}, and we will write $M\equiv N$, if each one can be mutually
+  translated into the other trough the notation \Cref{not:left}.
 \end{defn}
-\subsection{Variabili libere e legate}
-Consideriamo la $\lambda$-espressione $M=\lambda x.xy$ e sia $z\ne x$. Non sorprende che $M$
-sia, in un qualche senso da definire, equivalente a $\lambda z.zy$, anche se le due
-$\lambda$-espressioni non sono sintatticamente equivalenti, i.e. $M\not\equiv
-\lambda z.zy$. Questo è dovuto al fatto che, intuitivamente, la variabile $x$
-appare legata a $\lambda$ nella forma $\lambda x$.
+\subsection{Bound and Free Variables}
+Let us consider the $\lambda$-expression $M=y(\lambda x.x)$. It is evident that
+the two variable $x,y$ has a different meaning in the $\lambda$-term. The variable $x$, that 
+appears in $M$ under the scope $\lambda$, is \textit{bound} and is not a constant of the 
+$\lambda$-term. In a certain sense, that it will be more clear later, the
+variable $x$ can be substituted with another variable without that $M$ loses
+her meaning. Differently the variable $y$ is \textit{free} and stores a different information that
+characterizes the term $M$. Observe, for example, that the term $M$ could represent the
+formula $\int_0^y x\,dx$, in which the variable $x$ is usually called ``silent''.
+
+
 \begin{defn}
-  Data una $\lambda$-espressione $M$, l'insieme delle \textit{variabili
-  libere} $\FF(M)$ è costruito induttivamente come segue:
+  Given a $\lambda$-term $M$, the set $\FF(M)$ of the \textit{free variables}
+  of $M$ is recursively defined as follow:
   \begin{itemize}
-    \item $\FF(x)=\{x\}$;
-    \item $\FF(\lambda x.P)=\FF(P)\setminus\{x\}$;
-    \item $\FF(PQ)=\FF(P)\cup\FF(Q)$;
+    \item If $M=x$, where $x\in V$, then $\FF(M)=\{x\}$;
+    \item If $M=\lambda x.M_1$, then $\FF(M)=\FF(M_1)\setminus\{x\}$;
+    \item If $M=M_1M_2$, then $\FF(M)=\FF(M_1)\cup\FF(M_2)$.
   \end{itemize}
-  dove $x$ è una qualunque variabile e $P,Q$ sono $\lambda$-espressioni.
-  Analogamente, l'insieme delle \textit{variabili legate} $\BB(M)$ è definito
-  ricorsivamente sulla costruzione di $M$ come segue:
+  Analogously, the set $\BB(M)$ of the \textit{bound variables} of $M$
+  is recursively defined as follow:
   \begin{itemize}
-    \item $\BB(x)=\emptyset$;
-    \item $\BB(\lambda x.P) = \BB(P)\cup \{x\}$;
-    \item $\BB(PQ)=\BB(P)\cup\BB(Q)$;
+    \item If $M=x$, where $x\in V$, then $\BB(M)=\emptyset$;
+    \item If $M=\lambda x.M_1$, then $\BB(M) = \BB(M_1)\cup \{x\}$;
+    \item If $M=M_1M_2$, then $\BB(M)=\BB(M_1)\cup\BB(M_2)$;
   \end{itemize}
 \end{defn}
+By induction on the construction of $\Lambda$, it is easy to prove that
+the definition above is well-placed.
 
-Osserviamo che può accadere che per una $\lambda$-espressione $M$ vale
-$\BB(M)\cap\FF(M)\ne\emptyset$. I seguenti esempi possono essere di
-chiarimento.
+\begin{oss}
+  Observe that, by the definition above, a variable $x$ can be either a free and 
+  a bound variable of a $\lambda$-term $M$. For example, the 
+  $\lambda$-term $M=x(\lambda x.xx)$ is such that $\FF(M) = \BB(M) = \{x\}$.
+\end{oss}
 
-\begin{esempio}
-  La $\lambda$-espressione $x(\lambda x.xx)$ ha una sola variabile libera
-  ($x$) e solo una variabile legata ($x$).
-\end{esempio}
+\subsection{Substitution without Capture}
+Let us consider a $\lambda$-term $M$ and $x$ a free variable of $M$. In this
+section we want to define the \textit{substitution operation} in order to
+substitute the variable $x$ with another $\lambda$-term $N$ in $M$.
 
-\begin{defn}
-  Definiamo l'insieme dei \textit{combinatori} $\Lambda^0\subseteq\Lambda$ come 
-  \begin{equation}
-    \Lambda^0 =\left\{ M\in\Lambda\,:\, \FF(M)=\emptyset \right\}.
-  \end{equation}
-\end{defn}
+The following definition was first proposed by [Curry] in order to avoid the
+issue of the binding of a free variable.
 
-\subsection{Operatore di Sostituzione}
-Consideriamo una $\lambda$-espressione $M$ contente una variabile $x$.
-Vogliamo definire formalmente l'operazione di \textit{sostituzione} e cioè l'operazione 
-nel metalinguaggio che consiste nel sostituire alla variabile $x$ 
-una $\lambda$-espressione $N$.
-
-\begin{defn}[Curry]
-  Sia $M,N\in\Lambda$, definiamo l'operatore di \textit{sostituzione senza
-  cattura} che sostituisce la variabile $x$ nella $\lambda$-espressione $M$ con la
-  $\lambda$-espressione $N$, restituendo una $\lambda$-espressione indicata da
-  $M[x:=N]$, in modo ricorsivo sulla costruzione delle $\lambda$-espressioni:
+\begin{defn}[Substitution]
+  \label{def:subs}
+  Let $M,N\in\Lambda$, let us define the operation of \textit{substitution}
+  that acts by substituting a variable $x$ in $M$ with $N$, returning a new 
+  $\lambda$-term $M[x:=N]$. The
+  definition is recursive on the construction of $\Lambda$.
   \begin{itemize}
-    \item[{Caso 1}] Se $M$ è una variabile:
+    \item[{Case 1}] If $M$ is a variable:
       \begin{itemize}
-        \item Se $M=x$ allora $M[x:=N]\equiv N$;
-        \item Se $M=y\ne x$ allora $M[x:=N]\equiv y$;
+        \item If $M=x$, then $M[x:=N]\equiv N$;
+        \item If $M=y$ and $y\ne x$, then $M[x:=N]\equiv y$;
       \end{itemize}
-    \item[Caso 2] Se $M=M_1M_2$ è una applicazione:
+    \item[Case 2] If $M=M_1M_2$ is an application:
       \begin{itemize}
         \item $M[x:=N]\equiv (M_1[x:=N])(M_2[x:=N])$; 
       \end{itemize}
-    \item[Caso 3] Se $M$ è una astrazione:
+    \item[Case 3] If $M$ is an abstraction:
       \begin{itemize}
-        \item Se $M=\lambda x.M_1$ allora $M[x:=N] \equiv M$;
-        \item Se $M =\lambda y.M_1$, con $x\ne y$, allora 
+        \item If $M=\lambda x.M_1$, then $M[x:=N] \equiv M$;
+        \item If $M =\lambda y.M_1$ and $x\ne y$, then
           \[
             M[x:=N] \equiv\lambda z.M_1[y:=z][x:=N]
           \]
-          dove: $z=y$ se $x\not\in\FF(M_1)$ o
-          $y\not\in \FF(N)$; $z$ scelta tale che non compare né in $M$ né in
-          $N$ altrimenti;
+          where: $z=y$ if $x\not\in\FF(M_1)$ or $y\not\in\FF(N)$; 
+          $z$ is choose to be not in $M$ and not in $N$ otherwise;
       \end{itemize}
   \end{itemize}
 \end{defn}
-I primi due casi sono intuitivi, mentre il terzo è più delicato. Consideriamo
-$M=\lambda xy.x$ e $N=y$. Nella sostituzione $M[x:=N]$, la variabile libera 
-$y$ presente in $N$ verrebbe catturata, in quanto è presente in $M$ come variabile legata, 
-diventando anch'essa legata: Questo fenomeno si chiama \textit{cattura} e rende
-necessario introdurre la nuova variabile $z$.
+
+The first and the second case are intuitive. Regarding the third case few
+more words are required. If $M$ is an abstraction of the form $\lambda
+x.M_1$, substituting $x$ with $N$ has no meaning because $x$ is bound.
+Differently, if we want to substitute $x$ in a $\lambda$-term of the form
+$\lambda y.M_1$ (and $x\ne y)$, then consider the following example. Let
+$M=\lambda y.x$ and $N=y$. Observe that $y$ is free in $N$ and is bound $M$,
+and if we change $x$ with $N$ without introducing a new variable $z$ we will
+obtain $\lambda y.y$ that is not equivalent, in a sense that it will be more
+clear later, to the desired result. This phenomena is called \textit{binding}
+of a free variable.
 
 \begin{lemma}
-  Valgono le seguenti proposizioni
+  For any $M,N\in\Lambda$, the following statements hold.
   \begin{enumerate}
-    \item Se $x\in\FF(M)$ e $y\not\in\FF(M)$, allora $M\equiv M[x:=y][y:=x]$;
-    \item Se $x\in\FF(M)$ e $y\not\in\FF(M)$, allora $x\not\in\FF(M[x:=y])$ e
+    \item If $x\not\in\FF(M)$ and $x\not\in\BB(M)$, then $M[x:=N]\equiv M$;
+    \item If $y\not\in\FF(M)$ and $y\not\in\BB(M)$, then $M\equiv M[x:=y][y:=x]$;
+    \item If $x\in\FF(M)$ and $y\not\in\FF(M)$, then $x\not\in\FF(M[x:=y])$ e
       $y\in\FF(M[x:=y])$;
   \end{enumerate}
   \label{lem:sost}
+  \begin{proof}
+    Each statement can be proved by (strong) induction on the construction of the
+    $\lambda$-terms. The key idea is to observe that $\Lambda =
+    \cup_{n=0}^\infty\Lambda_n$ where: $\Lambda_0=V$ and $\Lambda_n$ contains all the
+    $\lambda$-terms that can be generated by application or abstraction of $\lambda$-terms 
+    in $\Lambda_k$ with $k<n$. After that, by supposing that independently $1,2,3$ hold
+    for $\Lambda_k$ with $k<n$, it is easy by applying the \Cref{def:subs}
+    to prove that the statement hold also for $\Lambda_n$.
+  \end{proof}
 \end{lemma}
 
 \section{$\alpha$-equivalenza}
