@@ -5,6 +5,7 @@
 \usepackage{cleveref}
 \newtheorem{thm}{Theorem}
 \newtheorem{lemma}{Lemma}
+\newtheorem{prop}{Proposition}
 \theoremstyle{definition}
 \newtheorem{defn}{Definition}
 \newtheorem{notation}{Notation}
@@ -223,52 +224,79 @@ $\alpha$-equivalence that doesn't requires further conventions or assumption
 and that can be easily implemented trough a functional paradigm.
 
 \begin{defn}[$\alpha$-equivalence]
-  Definiamo la relazione $\equiv_\alpha$ induttivamente simultanemente alla costruzione
-  della lambda espressioni.
-  Preso $\Lambda_0$ come l'insieme delle $\lambda$-espressioni di rango $0$
-  (costituite da una sola variabile, senza astrazioni o applicazioni), definiamo
+  Let us define $\equiv_\alpha$ recursively and in parallel with the
+  construction of $\Lambda$.
+  Let $\Lambda_0$ be the set of the terms of rank $0$ (i.e, of the form $x$ for
+  each variable in $V$). Then it holds
   \[
     \forall x,y \in \Lambda_0,\quad x\equiv_\alpha y\iff x=y.
   \]
-  Osserviamo che $\equiv_\alpha$ è di equivalenza su $\Lambda_0$.
-  Consideriamo ora l'insieme delle $\lambda$-espressioni di rango $k>0$
-  definito ricorsivamente come $\Lambda_k=\hat \Lambda_k\cup \bar \Lambda_k$,
-  dove
+  Let us consider the set $\Lambda_k$ of the $\lambda$-terms of rank $k$
+  defined as $\Lambda_k = \hat\Lambda_k\cup \bar\Lambda_k$ where
   \[
     \begin{aligned}
       \hat \Lambda_k &=\left\{ \lambda
-      x.M\,:M\in\Lambda_{k-1}\right\}\\
+      x.M\,:M\in\Lambda_{k-1},\,x\in V\right\}\\
       \bar \Lambda_k&=\left\{ (MN), (NM)\,:\, M\in\Lambda_{k-1},\,N\in\Lambda_i,\,i<k \right\}
     \end{aligned}
   \]
-  Su questo insieme definiamo la relazione $\equiv_\alpha$ come
+  Let us define over this set the relation $\equiv_\alpha$ as follow
   \begin{itemize}
-    \item Se $M,N\in\hat\Lambda_{k}$, con $M=\lambda x.M_1$ e $N=\lambda y.N_1$
-      allora
+    \item If $M,N\in\hat\Lambda_{k}$, with $M=\lambda x.M_1$ and $N=\lambda
+      y.N_1$, then
       \begin{itemize}
-        \item Se $x=y$, allora
+        \item If $x=y$, then
           \[
             M\equiv_\alpha N \iff M_1\equiv_\alpha N_1
           \]
-        \item Se $x\ne y$, allora
+        \item If $x\ne y$, then
           \[
-            M\equiv_\alpha N \iff N_1\equiv_\alpha M_1[x:=y]\quad\wedge\quad
+            M\equiv_\alpha N \iff M_1\equiv_\alpha N_1[y:=x]\quad\wedge\quad
             (y\not\in\FF(M_1) \wedge x\not\in\FF(N_1))
           \]
       \end{itemize}
-    \item Se $M,N\in\bar\Lambda_k$, con $M=M_1M_2$ e $N=N_1N_2$, allora
+    \item If $M,N\in\bar\Lambda_k$, with $M=M_1M_2$ and $N=N_1N_2$, then
       \[
         M\equiv_\alpha N \iff M_1\equiv_\alpha N_1\wedge M_2\equiv_\alpha N_2
       \]
   \end{itemize}
+
+  Observing that $\Lambda = \cup_{k=0}^\infty\Lambda_k$, and observing that
+  $\Lambda_i\cap\Lambda_j=\emptyset$, we can extend $\equiv_\alpha$ to the
+  whole set of $\lambda$-terms.
+\end{defn}
+
+\begin{prop}
+  The relation $\equiv_\alpha \subseteq \Lambda\times\Lambda$ is an
+  equivalence.
+  \begin{proof}
+    We want to proceed by strong induction over the rank.
+    By construction $\equiv_\alpha$ is an equivalence over $\Lambda_0$. Let
+    us suppose that $\equiv_\alpha$ is an equivalence for $\Lambda_i$ with
+    $i<k$. We want to prove \textit{reflexivity, symmetry and transitivity} property.
+    \begin{itemize}
+      \item[Reflex.] If $M\in\hat\Lambda_k$ with $M=\lambda x.M_1$, then
+        $M\equiv_\alpha M\iff M_1\equiv_\alpha M_1$ that is true because
+        $\equiv_\alpha$ is of equivalence on $\Lambda_{k-1}$. If
+        $M\in\bar\Lambda$ with $M=M_1M_2$, then $M\equiv_\alpha M$ if and only 
+        if $M_1\equiv_\alpha M_1$ and $M_2\equiv_\alpha M_2$, that is true 
+        because $\equiv_\alpha$ is of equivalence on $\Lambda_i$ with $i<k$. 
+      \item[Symmet.]
+        Let $M\equiv_\alpha N$. If $M,N\in\hat\Lambda$ with $M=\lambda x.M_1$
+        and $N=\lambda y.N_1$, then by construction: if $x=y$ and $M_1\equiv_\alpha
+        N_1$ implies that $N_1\equiv_\alpha M_1$; otherwise, if $x\ne y$,
+        then $M_1\equiv_\alpha N_1[y:=x]$ (with $x\not\in\FF(N_1)$ and
+        $y\not\in\FF(M_1)$) and so by \Cref{lem:sost} $M_1[x:=y]\equiv_\alpha
+        N_1[y:=x][x:=y]\equiv N_1$.
+    \end{itemize}
+  \end{proof}
+\end{prop}
+
+
   Per induzione forte e \Cref{lem:sost} si dimostra che $\equiv_\alpha$ è di equivalenza
   su $\Lambda_k$ per ogni $k$. In conclusione, essendo $\Lambda=\cup_k \Lambda_k$, 
   le relazioni di equivalenza si estendono ad una relazione di equivalenza 
   sulle lambda espressioni.
-\end{defn}
-
-
-
 \begin{lemma}
   La sostituzione è invariante per $\alpha$-equivalenza. Formalmente, se
   $M\equiv_\alpha M'$ e se $N\equiv_\alpha N'$ allora
