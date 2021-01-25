@@ -1,7 +1,7 @@
 \documentclass[a4paper,11pt]{article}
 \usepackage{amsmath}
 \usepackage{amsthm}
-\usepackage[italian]{babel}
+\usepackage[english]{babel}
 \usepackage{cleveref}
 \newtheorem{thm}{Theorem}
 \newtheorem{lemma}{Lemma}
@@ -125,7 +125,7 @@ section we want to define the \textit{substitution operation} in order to
 substitute the variable $x$ with another $\lambda$-term $N$ in $M$.
 
 The following definition was first proposed by [Curry] in order to avoid the
-issue of the binding of a free variable.
+issue known as \textit{binding of a free variable}.
 
 \begin{defn}[Substitution]
   \label{def:subs}
@@ -161,7 +161,7 @@ more words are required. If $M$ is an abstraction of the form $\lambda
 x.M_1$, substituting $x$ with $N$ has no meaning because $x$ is bound.
 Differently, if we want to substitute $x$ in a $\lambda$-term of the form
 $\lambda y.M_1$ (and $x\ne y)$, then consider the following example. Let
-$M=\lambda y.x$ and $N=y$. Observe that $y$ is free in $N$ and is bound $M$,
+$M=\lambda y.x$ and $N=y$. Observe that $y$ is free in $N$ and is bound in $M$,
 and if we change $x$ with $N$ without introducing a new variable $z$ we will
 obtain $\lambda y.y$ that is not equivalent, in a sense that it will be more
 clear later, to the desired result. This phenomena is called \textit{binding}
@@ -188,47 +188,41 @@ of a free variable.
 \end{lemma}
 
 \section{$\alpha$-equivalenza}
-Intuitivamente una $\lambda$-espressione è ottenuta tramite astrazione e/o
-applicazione di $\lambda$-espressioni. Due $\lambda$-espressioni si dicono
-$\alpha$ equivalenti se possono essere riscritte una nell'altra a meno di
-sostituzione di variabili legate. Questa conversione , per quanto sia
-facilmente comprensibile a livello intuitivo, nasconde una serie di
-complicazioni. La seguente definizione è una riformulazione della definizione formale
-fornita da [Curry et al.].
+From an intuitive point of view two $\lambda$-terms are $\alpha$-equivalents
+if each one can be translated to the other by changing one or more bound
+variables. This definition hides a number of complications, and it is not
+easy to state it in a formal manner. 
 
+Church solves the problem by including the $\alpha$-equivalence in a semantic
+level by adding the statement $\lambda x.M = \lambda z.M[x:=z]$ (called
+$\alpha$) in the list of the \textit{conversion rules}. Moreover, 
+he required different assumptions on the construction of the
+$\lambda$-terms, for example in his formulation only abstraction trough free
+variables was accepted ($\lambda y.x$ is not considered a $\lambda$-term).
 
-%Sarà utile nella definizione di
-%$\alpha$-equivalenza la seguente definizione
-%\begin{defn}
-%  Sia $M\in\Lambda$, definiamo ricorsivamente l'insieme $Sub(M)$, dei
-%  \textit{sottotermini} o \textit{sottoespressioni} di $M$, come segue:
-%  \begin{itemize}
-%    \item Se $M=x$ è una variabile, allora $Sub(M)=\{x\}$;
-%    \item Se $M=\lambda x.M_1$, allora $Sub(M)=\{M\} \cup Sub(M_1)$;
-%    \item Se $M=M_1M_2$, allora $Sub(M)=\{M\}\cup Sub(M_1) \cup Sub(M_2)$.
-%  \end{itemize}
-%\end{defn}
+In Curry's formulation [Curry] a different idea is used: 
+\begin{enumerate}
+  \item The definition of $\alpha$-equivalence is provided for abstractions
+    by stating $\lambda x.M \equiv_\alpha \lambda z.M[x:=z]$. 
+  \item The relation $\equiv_\alpha$ is then extended to the whole
+$\lambda$-terms by transitive closure. 
+\end{enumerate}
 
+In [Barendregt], the definition of $\alpha$-equivalence is included in the
+syntactic equivalence and it is defined informally as: ``M is
+$\alpha$-congruent to $N$, if $N$ results from $M$ by a series of changes of
+the bound variables''. Moreover, the author needs a variable convention: 
+When two terms are in the same statement (or definition,
+theorem, etc.) then different names for the variables have to be used.
 
-%\begin{defn}[$\alpha$-equivalenza]
-%  Sia $M\in\Lambda$. Consideriamo l'insieme di $\lambda$ espressioni 
-%  che si ottengono sostituendo a $M$ la variabile legata $x$. La definizione
-%  è costruita per casi come segue
-%  \begin{itemize}
-%    \item Se $M=x$, allora $R_M=\{x\}$;
-%    \item Se $M=\lambda x.M_1$, allora $R_M=\left\{ \lambda
-%      y.M_1[x:=y]\,:\,y\not\in\FF(M) \right\}$;
-%    \item Se $M=M_1M_2$, allora $R_M=\left\{
-%      N_1N_2\,:\,N_1\in R_{M_1},\,N_2\in R_{M_2} \right\}$.
-%  \end{itemize}
-%  Osserviamo che $R_M$ forniscono un ricoprimento di $\lambda$, precisamente
-%  \[
-%    \bigcup_{M\in\Lambda} R_M = \Lambda.
-%  \]
-%
-%\end{defn}
+Even if the definition above are totally valid, by a practical point of view
+they contains two uncomfortable things: They don't provide an
+operative definition (Curry). They use conventions on the terms (Church,
+Berendregt). The following lines provide an operative definition of
+$\alpha$-equivalence that doesn't requires further conventions or assumption
+and that can be easily implemented trough a functional paradigm.
 
-\begin{defn}[$\alpha$-equivalenza]
+\begin{defn}[$\alpha$-equivalence]
   Definiamo la relazione $\equiv_\alpha$ induttivamente simultanemente alla costruzione
   della lambda espressioni.
   Preso $\Lambda_0$ come l'insieme delle $\lambda$-espressioni di rango $0$
