@@ -3,6 +3,15 @@
 \usepackage{amsthm}
 \usepackage[english]{babel}
 \usepackage{cleveref}
+\usepackage{listing}
+\usepackage{csquotes}
+\usepackage[
+backend=biber,
+style=numeric,
+sorting=ynt
+]{biblatex}
+\addbibresource{biblio.bib}
+%environment 
 \newtheorem{thm}{Theorem}
 \newtheorem{lemma}{Lemma}
 \newtheorem{prop}{Proposition}
@@ -35,7 +44,7 @@ relation and without assuming conventions on the name of the variables.
 From an intuitive point of view, a $\lambda$-term is a representation of
 a mathematical function written as a combination of \textit{variables}. It
 is quite surprising to notice that ``a systematic notation for functions is lacking
-in ordinary mathematics'' [Curry]. In fact, the meaning of $f(x)$, that is the usual
+in ordinary mathematics'' \cite{Curry}. In fact, the meaning of $f(x)$, that is the usual
 accepted notation to indicate a function (\textit{Euler Notation}), is not uniquely
 determined and has to be deduced from the context. Sometimes, with this
 notation, we refer to a function depending on the variable $x$; sometimes we refers to the
@@ -125,7 +134,7 @@ Let us consider a $\lambda$-term $M$ and $x$ a free variable of $M$. In this
 section we want to define the \textit{substitution operation} in order to
 substitute the variable $x$ with another $\lambda$-term $N$ in $M$.
 
-The following definition was first proposed by [Curry] in order to avoid the
+The following definition was first proposed by \cite{Curry} in order to avoid the
 issue known as \textit{binding of a free variable}.
 
 \begin{defn}[Substitution]
@@ -188,20 +197,20 @@ of a free variable.
   \end{proof}
 \end{lemma}
 
-\section{$\alpha$-equivalenza}
+\section{$\alpha$-equivalence}
 From an intuitive point of view two $\lambda$-terms are $\alpha$-equivalents
-if each one can be translated to the other by changing one or more bound
+if each one can be transformed in the other by changing one or more bound
 variables. This definition hides a number of complications, and it is not
 easy to state it in a formal manner. 
 
-Church solves the problem by including the $\alpha$-equivalence in a semantic
+Church, \cite{Church}, solves the problem by including the $\alpha$-equivalence in a semantic
 level by adding the statement $\lambda x.M = \lambda z.M[x:=z]$ (called
 $\alpha$) in the list of the \textit{conversion rules}. Moreover, 
 he required different assumptions on the construction of the
 $\lambda$-terms, for example in his formulation only abstraction trough free
 variables was accepted ($\lambda y.x$ is not considered a $\lambda$-term).
 
-In Curry's formulation [Curry] a different idea is used: 
+In Curry's formulation \cite{Curry} a different idea is used: 
 \begin{enumerate}
   \item The definition of $\alpha$-equivalence is provided for abstractions
     by stating $\lambda x.M \equiv_\alpha \lambda z.M[x:=z]$. 
@@ -209,7 +218,7 @@ In Curry's formulation [Curry] a different idea is used:
 $\lambda$-terms by transitive closure. 
 \end{enumerate}
 
-In [Barendregt], the definition of $\alpha$-equivalence is included in the
+In \cite{Barendregt}, the definition of $\alpha$-equivalence is included in the
 syntactic equivalence and it is defined informally as: ``M is
 $\alpha$-congruent to $N$, if $N$ results from $M$ by a series of changes of
 the bound variables''. Moreover, the author needs a variable convention: 
@@ -218,16 +227,17 @@ theorem, etc.) then different names for the variables have to be used.
 
 Even if the definition above are totally valid, by a practical point of view
 they contains two uncomfortable things: They don't provide an
-operative definition (Curry). They use conventions on the terms (Church,
-Berendregt). The following lines provide an operative definition of
+operative definition \cite{Curry}. They use conventions on the terms
+(\cite{Church, Barendregt}). The following lines provide an operative definition of
 $\alpha$-equivalence that doesn't requires further conventions or assumption
 and that can be easily implemented trough a functional paradigm.
 
 \begin{defn}[$\alpha$-equivalence]
+  \label{def:alpha_eq}
   Let us define $\equiv_\alpha$ recursively and in parallel with the
   construction of $\Lambda$.
   Let $\Lambda_0$ be the set of the terms of rank $0$ (i.e, of the form $x$ for
-  each variable in $V$). Then it holds
+  each variable in $V$), we define
   \[
     \forall x,y \in \Lambda_0,\quad x\equiv_\alpha y\iff x=y.
   \]
@@ -282,29 +292,190 @@ and that can be easily implemented trough a functional paradigm.
         if $M_1\equiv_\alpha M_1$ and $M_2\equiv_\alpha M_2$, that is true 
         because $\equiv_\alpha$ is of equivalence on $\Lambda_i$ with $i<k$. 
       \item[Symmet.]
-        Let $M\equiv_\alpha N$. If $M,N\in\hat\Lambda$ with $M=\lambda x.M_1$
-        and $N=\lambda y.N_1$, then by construction: if $x=y$ and $M_1\equiv_\alpha
+        Let $M\equiv_\alpha N$. If $M,N\in\hat\Lambda_k$ with $M=\lambda x.M_1$
+        and $N=\lambda y.N_1$, then by construction: if $x=y$, $M_1\equiv_\alpha
         N_1$ implies that $N_1\equiv_\alpha M_1$; otherwise, if $x\ne y$,
         then $M_1\equiv_\alpha N_1[y:=x]$ (with $x\not\in\FF(N_1)$ and
-        $y\not\in\FF(M_1)$) and so by \Cref{lem:sost} $M_1[x:=y]\equiv_\alpha
-        N_1[y:=x][x:=y]\equiv N_1$.
+        $y\not\in\FF(M_1)$) and so by \Cref{lem:sost} $M_1[x:=y]\equiv_\alpha 
+        N_1[y:=x][x:=y]\equiv N_1$. The case $M,N\in\bar\Lambda_k$ follows
+        from Inductive Hypothesis.
+      \item [Trans.] Suppose that $X,Y,Z\in\Lambda_k$, $X \equiv_\alpha Y$,
+        and $Y\equiv_\alpha Z$. If $X,Y,Z\in\hat\Lambda_k$ with 
+        $X=\lambda x.X_1$, $Y=\lambda y.Y_1$, $Z=\lambda z.Z_1$ then for
+        point 3 of \Cref{lem:sost} $x\not\in\FF(Z_1)$ and so
+        $X_1\equiv_\alpha Y_1[y:=x]\equiv_\alpha Z_1[z:=y][y:=x]\equiv_\alpha
+        Z_1[z:=x]$. Therefore, if $X,Y,Z\in\bar\Lambda_k$, then, because 
+        the transitive property is valid for the single terms of the
+        applications in $\bar\Lambda_i$ with $i<k$, then by inductive
+        hypothesis the property also hold for $\Lambda_k$.
     \end{itemize}
   \end{proof}
 \end{prop}
 
+\section{Implementation}
+All the definitions in the previous sections can be implemented in Huskell
+language. 
+\subsection{$\lambda$-terms}
+The $\lambda$-terms are formally defined as a data type as follow
+\begin{verbatim}
+-- Definition of lambda terms
+data LamTerm = Var String | Abs String LamTerm | App LamTerm LamTerm
+\end{verbatim}
+The following function checks whether a variable $x$ is free in a term $M$.
+The definition is made by cases on the construction of the type
+\texttt{LamTerm}.
+\begin{verbatim}
+-- Function that check if a variable is free
+is_free x (Var y)     = (x == y)
+is_free x (Abs y e1)  = if (x==y) then False else is_free x e1
+is_free x (App e1 e2) = is_free x e1 || is_free x e2 
+\end{verbatim}
 
-  Per induzione forte e \Cref{lem:sost} si dimostra che $\equiv_\alpha$ è di equivalenza
-  su $\Lambda_k$ per ogni $k$. In conclusione, essendo $\Lambda=\cup_k \Lambda_k$, 
-  le relazioni di equivalenza si estendono ad una relazione di equivalenza 
-  sulle lambda espressioni.
-\begin{lemma}
-  La sostituzione è invariante per $\alpha$-equivalenza. Formalmente, se
-  $M\equiv_\alpha M'$ e se $N\equiv_\alpha N'$ allora
-  \[
-    M[x:= N] \equiv_\alpha M'[x:=N']
-  \]
-\end{lemma}
+In a similar manner we can define the function \texttt{is\_bound} that check
+whether a variable is bound in a $\lambda$-term
+\begin{verbatim}
+-- Function that check if a variable is bound
+is_bound x (Var y)     = False
+is_bound x (Abs y e1)  = if (x==y) then True else is_bound x e1
+is_bound x (App e1 e2) = is_bound x e1 || is_bound x e2 
+\end{verbatim}
 
+\subsection{Substitution}
+Before presenting the \texttt{subs} function, we have to notice that when a
+$\lambda$-term is an abstraction (Case 3 of \Cref{def:subs}) we carefully
+need to introduce a new fresh variable. The following functions allows to
+provide a new variable that is not present in a term neither as free or bound
+variable.
+
+\begin{verbatim}
+-- Function that generate fresh Var
+-- Auxiliary function that generate a new variable from an old name
+fresh_from_str m y = 
+  if not ((is_free y m) || (is_bound y m)) then 
+    y 
+  else
+    fresh_from_str m (y ++ "+")
+
+-- fresh m --> String, return a string the is not free and not bound in m 
+fresh m = fresh_from_str m "a"
+\end{verbatim}
+
+Finally, the function \texttt{subs} take respectively a variable $x$, a term
+$M$ and a term $N$ and provides the $\lambda$-term $M[x:=N]$ by using \Cref{def:subs}.
+
+\begin{verbatim}
+-- Substitution function:
+-- (subs x m n) substitutes the variable x in m with the lambda term n
+--
+-- Case 1
+subs x (Var y) n = if (x == y) then n else (Var y)
+
+-- Case 2
+subs x (App m1 m2) n = App (subs x m1 n) (subs x m2 n)
+
+-- Case 3
+subs x (Abs y m) n = 
+  if (x == y) then 
+    (Abs y m) 
+  else 
+    if not ((is_free x m) && (is_free y n)) then 
+      Abs y (subs x m n)
+    else 
+      Abs (fresh (App m n)) (subs x (subs y m (Var (fresh (App m n)))) n)
+
+\end{verbatim}
+
+\subsection{\alpha-equivalence}
+
+In conclusion, the function \texttt{alpha\_eq} checks whether two $\lambda$-terms are
+$\alpha$-equivalents by following the \Cref{def:alpha_eq}. 
+
+\begin{verbatim}
+-- Check for Alpha equivalence
+alpha_eq (Var x) (Var y) = (x == y)
+alpha_eq (App m1 m2) (App n1 n2) = (alpha_eq m1 n1) && (alpha_eq m2 n2)
+alpha_eq (Abs x m) (Abs y n) = 
+  if (x==y) then 
+    alpha_eq m n
+  else
+    (not(is_free y m)) && (not(is_free x n)) && (alpha_eq m (subs y n (Var x)))
+-- Spurious cases
+alpha_eq _ _ = False
+\end{verbatim}
+Observe that the last line is compulsory in order to define the function in all
+the possible cases and to avoid
+\texttt{Non-exhaustive patterns in function alpha\_eq} error. 
+\section{Examples}
+The following lines provide a list of examples of utilizations of the
+previous definitions.
+
+It is helpful to introduce the function \texttt{l2s} that prints an object of
+type \texttt{LamTerm} as as string. The function is recursively defined on
+the definition of the type
+\begin{verbatim}
+-- Prinitng function
+l2s (Var n)     = n
+l2s (App e1 e2) = "(" ++ (l2s e1) ++ " " ++ (l2s e2) ++ ")"
+l2s (Abs n e)   = "\\" ++ n ++ "." ++ (l2s e)
+\end{verbatim}
+
+We can put all the definition above in the module \texttt{LambdaCalcolo.hs}
+and load it in \texttt{ghci} 
+\begin{verbatim}
+GHCi, version 8.4.4: http://www.haskell.org/ghc/  :? for help
+Prelude> :load LambdaCalcolo.hs 
+[1 of 1] Compiling Main             ( LambdaCalcolo.hs, interpreted )
+Ok, one module loaded.
+\end{verbatim}
+
+Initially we can define and print two terms
+\begin{verbatim}
+*Main> m = Abs "x" (App (Var "x") (Var "y"))
+*Main> 
+*Main> l2s m
+"\\x.(x y)"
+*Main> 
+*Main> 
+*Main> n = Abs "z" (App (Var "z") (Var "x"))
+*Main> 
+*Main> l2s n
+"\\z.(z x)"
+\end{verbatim}
+
+We can check the presence of bound and free variables by running
+\begin{verbatim}
+*Main> is_free "x" m
+False
+*Main> is_bound "x" m
+True
+\end{verbatim}
+
+We can now check whether the substitution is made without capture by running
+\begin{verbatim}
+*Main> l2s (subs "y" m (Var "x"))
+"\\a.(a x)"
+*Main>
+*Main> l2s (subs "y" m n)
+"\\a.(a \\z.(z x))"
+*Main>
+\end{verbatim}
+
+And finally we can observe that the two terms $m$ and $n$ are not
+equivalents.
+\begin{verbatim}
+*Main> alpha_eq m n
+False
+*Main>
+*Main> alpha_eq m (subs "x" n (Var "y"))
+True
+*Main> 
+\end{verbatim}
+%%%%
+% BIBLIOGRAPHY
+%%%%
+\printbibliography
+
+\end{document}
 \section{Equivalenza Semantica}
 Possiamo ora definire una prima versione della equivalenza semantica come segue
 \begin{defn}[Teoria $\lambda$]
@@ -320,4 +491,4 @@ Possiamo ora definire una prima versione della equivalenza semantica come segue
   \end{itemize}
 \end{defn}
 
-\end{document}
+

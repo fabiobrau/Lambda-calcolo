@@ -28,13 +28,13 @@ fresh m = fresh_from_str m "a"
 -- Substitution function:
 -- (subs x m n) substitutes the variable x in m with the lambda term n
 --
--- Caso 1
+-- Case 1
 subs x (Var y) n = if (x == y) then n else (Var y)
 
--- Caso 2
+-- Case 2
 subs x (App m1 m2) n = App (subs x m1 n) (subs x m2 n)
 
--- Caso 3
+-- Case 3
 subs x (Abs y m) n = if (x == y) 
                         then (Abs y m) 
                     else 
@@ -52,10 +52,4 @@ alpha_eq (Abs x m) (Abs y n) = if (x==y)
                                   (not (is_free y m)) && (not (is_free x n)) && (alpha_eq m (subs y n (Var x)))
 
 -- Spiurious cases
-alpha_eq (Var x) (App m n) = False
-alpha_eq (App m n) (Var x) = False
-alpha_eq (Var x) (Abs y m) = False
-alpha_eq (Abs x m) (Var y) = False
-alpha_eq (App m1 m2) (Abs x n) = False
-alpha_eq (Abs x n) (App m1 m2) = False
-
+--alpha_eq _ _ = False
