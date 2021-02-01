@@ -24,7 +24,8 @@ sorting=ynt
 \newcommand{\FF}{\mathcal{F}}
 \newcommand{\BB}{\mathcal{B}}
 %%%
-\title{An implementable definition of $\alpha$-equivalence in
+\title{An operative definition of \\
+  $\alpha$-equivalence in
 $\lambda$-calculus\\
 {\large Functional Programming Project}}
 \author{Fabio Brau}
@@ -33,14 +34,24 @@ $\lambda$-calculus\\
 \maketitle
 \tableofcontents
 \section{Introduction}
+The aim of this project is to provide a formal and operative 
+definition of $\alpha$-equivalence on the $\lambda$-terms without seeing 
+it as a transitive closure of a relation and without assuming conventions 
+on the name of the variables.
 
+In \Cref{sec:lambda-terms} we will introduce the definition of
+$\lambda$-terms, the definition of \textit{bound} and \textit{free}
+variables, and the definition of \textit{substitution}.
 
-This project's aim is to provide a formal definition of $\alpha$-equivalence
-on the $\lambda$-terms without seeing it as a transitive closure of a
-relation and without assuming conventions on the name of the variables.
+In the \Cref{sec:alpha-eq} we will provide the definition of the
+$\alpha$-equivalence by using the definition of substitution.
 
+In the \Cref{sec:implementation} we will implement the definitions of the
+previous sections in the functional programming language \texttt{Haskell}
+that we can test with some examples in the last section.
 
 \section{Lambda Terms}
+\label{sec:lambda-terms}
 From an intuitive point of view, a $\lambda$-term is a representation of
 a mathematical function written as a combination of \textit{variables}. It
 is quite surprising to notice that ``a systematic notation for functions is lacking
@@ -57,7 +68,7 @@ when we want to evaluate $f$ in the object $x$. The introduction of the
 symbol $\lambda$ could be helpful, in a typographic sense, by shortening the
 notation $x\mapsto f(x)$ in $\lambda x.f(x)$.
 
-\begin{defn}
+\begin{defn}[$\lambda$-terms]
   Let be $V=\{v_1,v_2,\dots\}$ an infinite set of \textit{variables}. The
   set of the $\lambda$-terms, indicated with $\Lambda$, is recursively
   defined as follow
@@ -99,7 +110,7 @@ the two variable $x,y$ has a different meaning in the $\lambda$-term. The variab
 appears in $M$ under the scope $\lambda$, is \textit{bound} and is not a constant of the 
 $\lambda$-term. In a certain sense, that it will be more clear later, the
 variable $x$ can be substituted with another variable without that $M$ loses
-her meaning. Differently the variable $y$ is \textit{free} and stores a different information that
+its meaning. Differently the variable $y$ is \textit{free} and stores a different information that
 characterizes the term $M$. Observe, for example, that the term $M$ could represent the
 formula $\int_0^y x\,dx$, in which the variable $x$ is usually called ``silent''.
 
@@ -198,10 +209,11 @@ of a free variable.
 \end{lemma}
 
 \section{$\alpha$-equivalence}
+\label{sec:alpha-eq}
 From an intuitive point of view two $\lambda$-terms are $\alpha$-equivalents
 if each one can be transformed in the other by changing one or more bound
 variables. This definition hides a number of complications, and it is not
-easy to state it in a formal manner. 
+easy to find a definition that is either operative and easy to state. 
 
 Church, \cite{Church}, solves the problem by including the $\alpha$-equivalence in a semantic
 level by adding the statement $\lambda x.M = \lambda z.M[x:=z]$ (called
@@ -225,10 +237,12 @@ the bound variables''. Moreover, the author needs a variable convention:
 When two terms are in the same statement (or definition,
 theorem, etc.) then different names for the variables have to be used.
 
-Even if the definition above are totally valid, by a practical point of view
-they contains two uncomfortable things: They don't provide an
-operative definition \cite{Curry}. They use conventions on the terms
-(\cite{Church, Barendregt}). The following lines provide an operative definition of
+Even if the definition above are totally valid by a logical and mathematical
+point of view, by a practical point of view they contains two uncomfortable
+things, so that can be not easy to code them in a functional programming
+language. For example, they don't provide an operative definition
+\cite{Curry}, and they use conventions on the terms (\cite{Church, Barendregt}). 
+The following lines are an attempt of an operative definition of
 $\alpha$-equivalence that doesn't requires further conventions or assumption
 and that can be easily implemented trough a functional paradigm.
 
@@ -313,7 +327,8 @@ and that can be easily implemented trough a functional paradigm.
 \end{prop}
 
 \section{Implementation}
-All the definitions in the previous sections can be implemented in Huskell
+\label{sec:implementation}
+All the definitions in the previous sections can be implemented in Haskell
 language. 
 \subsection{$\lambda$-terms}
 The $\lambda$-terms are formally defined as a data type as follow
