@@ -52,4 +52,39 @@ alpha_eq (Abs x m) (Abs y n) = if (x==y)
                                   (not (is_free y m)) && (not (is_free x n)) && (alpha_eq m (subs y n (Var x)))
 
 -- Spiurious cases
---alpha_eq _ _ = False
+alpha_eq _ _ = False
+
+
+-- Beta reduction
+
+redex (Var x) = (Var x)
+redex (Abs x m) = Abs x (redex m)
+redex (App (Abs x m) n) = redex (subs x m n)
+redex (App (App m1 m2) n) = redex (App (redex (App m1 m2)) (redex n))
+redex (App (Var x) m) = App (Var x) (redex m)
+
+-- natural numbers
+zero = Abs "f" (Abs "x" (Var "x"))
+
+next = Abs "n" (Abs "f" (Abs "x" (App (Var "f") ( App (App (Var "n") (Var "f")) (Var "x")))))
+
+-- boolean
+true = Abs "t" (Abs "f" (Var "t"))
+false = Abs "t" (Abs "f" (Var "f"))
+
+-- if then else
+cond = Abs "c" (Abs "a" (Abs "b" (App (App (Var "c") (Var "a")) (Var "b"))))
+
+
+-- is_zero
+is_zero m = alpha_eq (redex m) zero
+
+-- Y combinator
+y_comb_auxiliary_ = Abs "x" (App (Var "f") (App (Var "x") (Var "x")))
+y_comb = Abs "f" (App y_comb_auxiliary_ y_comb_auxiliary_)
+
+-- infinity
+omega_0 =  App y_comb next
+
+
+
